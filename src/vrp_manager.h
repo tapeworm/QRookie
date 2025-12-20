@@ -43,9 +43,6 @@ class VrpManager : public QObject
     Q_PROPERTY(QVariantList gamesInfo READ gamesInfo NOTIFY gamesInfoChanged)
     Q_PROPERTY(QStringList compatibleThemes READ compatibleThemes CONSTANT)
     Q_PROPERTY(AppSettings *settings READ settings)
-    Q_PROPERTY(GameInfoModel *localGamesModel READ localGamesModel CONSTANT)
-    Q_PROPERTY(GameInfoModel *downloadGamesModel READ downloadGamesModel CONSTANT)
-    Q_PROPERTY(DeviceManager *deviceManager READ deviceManager CONSTANT)
 
 public:
     enum Status {
@@ -97,17 +94,18 @@ public:
         emit gamesInfoChanged();
     }
 
-    GameInfoModel *localGamesModel() const
+    // TODO: as property
+    Q_INVOKABLE GameInfoModel *localGamesModel()
     {
         return local_games_;
     }
-
-    GameInfoModel *downloadGamesModel() const
+    // TODO: as property
+    Q_INVOKABLE GameInfoModel *downloadGamesModel()
     {
         return download_games_;
     }
-
-    DeviceManager *deviceManager() const
+    // TODO: as property
+    Q_INVOKABLE DeviceManager *deviceManager()
     {
         return device_manager_;
     }

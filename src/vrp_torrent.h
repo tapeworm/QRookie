@@ -37,8 +37,6 @@ public:
     }
 
 private:
-    void loadTorrents();
-    void saveTorrents();
     QMap<QString, QString> magnet_uri_;
     QNetworkAccessManager manager_;
 };

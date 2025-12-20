@@ -69,7 +69,7 @@ Kirigami.ApplicationWindow {
     vrp: VrpManager {
     }
 
-    deviceManager: vrp.deviceManager
+    deviceManager: vrp.deviceManager()
 
     header: TabBar {
         id: bar

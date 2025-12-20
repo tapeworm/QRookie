@@ -233,11 +233,8 @@ QString VrpManager::getGameId(const QString &release_name) const
 
 QString VrpManager::getLocalGamePath(const QString &release_name) const
 {
-    QString path = data_path_ + "/" + release_name;
-    if (QDir(path).exists()) {
-        return path;
-    }
-    return "";
+    // TODO: check path exists
+    return data_path_ + "/" + release_name;
 }
 
 QString VrpManager::getGameThumbnailPath(const QString &package_name)

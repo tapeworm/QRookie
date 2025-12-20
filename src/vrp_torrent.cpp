@@ -16,9 +16,12 @@
  */
 
 #include "vrp_torrent.h"
+#include "app_settings.h"
 
 #include <QCoroNetworkReply>
 #include <QCoroSignal>
+#include <QDir>
+#include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -26,12 +29,12 @@
 VrpTorrent::VrpTorrent(QObject *parent)
     : QObject(parent)
 {
-    // TODO: load local torrents.json
+    loadTorrents();
 }
 
 VrpTorrent::~VrpTorrent()
 {
-    // TODO: save torrents.json
+    saveTorrents();
 }
 
 QCoro::Task<bool> VrpTorrent::update()
@@ -62,5 +65,54 @@ QCoro::Task<bool> VrpTorrent::update()
         QString magnet_uri = obj["magnet_uri"].toString();
         magnet_uri_[release_name] = magnet_uri;
     }
+    saveTorrents();
     co_return true;
+}
+
+void VrpTorrent::loadTorrents()
+{
+    QString path = AppSettings::instance()->dataPath() + "/torrents.json";
+    QFile file(path);
+    if (!file.exists() || !file.open(QIODevice::ReadOnly)) {
+        return;
+    }
+
+    QByteArray data = file.readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(data);
+    if (doc.isNull()) {
+        return;
+    }
+
+    QJsonArray jsonArray = doc.array();
+    magnet_uri_.clear();
+    for (const QJsonValue &value : jsonArray) {
+        QJsonObject obj = value.toObject();
+        QString release_name = obj["name"].toString();
+        QString magnet_uri = obj["magnet_uri"].toString();
+        magnet_uri_[release_name] = magnet_uri;
+    }
+}
+
+void VrpTorrent::saveTorrents()
+{
+    if (magnet_uri_.isEmpty()) {
+        return;
+    }
+
+    QString path = AppSettings::instance()->dataPath() + "/torrents.json";
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly)) {
+        return;
+    }
+
+    QJsonArray jsonArray;
+    for (auto it = magnet_uri_.constBegin(); it != magnet_uri_.constEnd(); ++it) {
+        QJsonObject obj;
+        obj["name"] = it.key();
+        obj["magnet_uri"] = it.value();
+        jsonArray.append(obj);
+    }
+
+    QJsonDocument doc(jsonArray);
+    file.write(doc.toJson());
 }

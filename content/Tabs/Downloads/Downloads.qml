@@ -146,7 +146,7 @@ RowLayout {
             spacing: 10
             clip: true
             snapMode: ListView.SnapToItem
-            model: app.vrp.localGamesModel()
+            model: app.vrp.localGamesModel
 
             Label {
                 anchors.centerIn: local_list
